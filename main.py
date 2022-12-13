@@ -25,7 +25,14 @@ def main():
     data_attribute= data.drop(columns=['Department','Degree year'])
     data_classes = data.Department
 
-    data_attribute_train, data_attribute_test, data_classes_train, data_classes_test = train_test_split(data_attribute,data_classes)
+    # decided to turn shuffle to false to not make it random
+    # to keep it consistent
+    # use stratify=data_classes to split the 
+    # train and test arrays to have the same number of 
+    # each class equal, ex: there are 5 engineers and 5 non engineers, 10 instances
+    # stratify enables the test set to have 2 eng and 2 non eng
+    # and train to have 3 eng and 3 non eng     
+    data_attribute_train, data_attribute_test, data_classes_train, data_classes_test = train_test_split(data_attribute,data_classes, shuffle=False)
 
     #preprocessing
     le = preprocessing.LabelEncoder()

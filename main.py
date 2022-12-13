@@ -5,8 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
-from sklearn.svm import SVC
-
+from sklearn.neighbors import KNeighborsClassifier
 
 
 def main():
@@ -26,12 +25,11 @@ def main():
     data_attribute= data.drop(columns=['Department','Degree year'])
     data_classes = data.Department
 
-    data_attribute_train, data_attribute_test,data_classes_train, data_classes_test = train_test_split(data_attribute,data_classes)
+    data_attribute_train, data_attribute_test, data_classes_train, data_classes_test = train_test_split(data_attribute,data_classes)
 
     #preprocessing
     le = preprocessing.LabelEncoder()
     le = le.fit(data_classes_train)
-    le.classes_
     class_train = le.transform(data_classes_train)
     data_attribute_train.to_numpy()
 
@@ -40,14 +38,13 @@ def main():
     attribute_train= n1.transform(data_attribute_train.to_numpy())
     
     class_test = le.transform(data_classes_test.to_numpy())
-    attribute_test= n1.transform(data_attribute_test.to_numpy())
+    attribute_test = n1.transform(data_attribute_test.to_numpy())
     
     # training the data
-    from sklearn.neighbors import KNeighborsClassifier
     knn = KNeighborsClassifier(n_neighbors=11)
     knn = knn.fit(attribute_train,class_train)
 
-    # getting the best k
+    # getting the best k, first with minmax scaler
     training= []
     testing= []
     k_values = list(range(1,7))
@@ -57,7 +54,7 @@ def main():
         training.append(knn.score(attribute_train,class_train))
         testing.append(knn.score(attribute_test,class_test))
     
-    fig1 = plt.figure(figsize=(25,10))
+    plt.figure(figsize=(25,10))
     plt.scatter(k_values,training,c='r',label='Training Dataset')
     plt.scatter(k_values,testing,c='g',label='Testing Dataset')
     plt.legend(loc=3)
@@ -77,7 +74,7 @@ def main():
         knn = knn.fit(attribute_train2,class_train)
         training2.append(knn.score(attribute_train2,class_train))
 
-    fig2 = plt.figure(figsize=(25,10))
+    plt.figure(figsize=(25,10))
     plt.scatter(k_values,training2,c='y',label='Training Dataset')
     plt.scatter(k_values,testing,c='m',label='Testing Dataset')
     plt.legend(loc=3)
@@ -95,6 +92,7 @@ def main():
     confusion_matrix_diagram = confusion_matrix(class_test, prediction_array, labels = [0,1])
     ConfusionMatrixDisplay(confusion_matrix=confusion_matrix_diagram, display_labels = ['In Engg', 'Not in Engg']).plot()
     plt.show()
+    plt.close()
 
     #classifying a new instance
     new_instance = np.array([  [145, 4.0, 25]  ]) 
